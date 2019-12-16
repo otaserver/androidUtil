@@ -1,0 +1,40 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion "$COMPILE_SDK_VERSION"
+    defaultConfig {
+        applicationId "com.otaserver.android.util"
+        minSdkVersion "$MIN_SDK_VERSION"
+        targetSdkVersion "$TARGET_SDK_VERSION"
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        disable('AllowBackup', 'GoogleAppIndexingWarning', 'MissingApplicationIcon')
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+//    androidTestImplementation 'androidx.test:core:1.2.0'
+
+    //Gson序列号对象
+    implementation 'com.google.code.gson:gson:2.8.5'
+}
+
+task makeReleaseJar(type: Jar, dependsOn: ['assembleRelease']){
+    archiveName = 'com.otaserver.androidUtil.jar'
+    from ('build/intermediates/javac/release/classes')
+    destinationDir = file('build/libs')
+}
+
