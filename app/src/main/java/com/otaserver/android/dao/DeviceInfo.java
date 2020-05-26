@@ -1,5 +1,10 @@
 package com.otaserver.android.dao;
 
+/**
+ * 定义能够采集的设备信息条目。
+ * @version 0.1
+ * @date   2020-05-23
+ */
 public class DeviceInfo {
 
     //无需权限，一定存在
@@ -14,7 +19,8 @@ public class DeviceInfo {
     private String imei0;
     private String imei1;
     private String meid;
-    private String te1;
+    private String tel1;
+    private String tel2;
     private String simSerialNumber;
     private String imsi;
 
@@ -77,12 +83,20 @@ public class DeviceInfo {
         this.meid = meid;
     }
 
-    public String getTe1() {
-        return te1;
+    public String getTel1() {
+        return tel1;
     }
 
-    public void setTe1(String te1) {
-        this.te1 = te1;
+    public void setTel1(String tel1) {
+        this.tel1 = tel1;
+    }
+
+    public String getTel2() {
+        return tel2;
+    }
+
+    public void setTel2(String tel2) {
+        this.tel2 = tel2;
     }
 
     public String getSimSerialNumber() {
@@ -127,7 +141,8 @@ public class DeviceInfo {
                 ", imei0='" + imei0 + '\'' +
                 ", imei1='" + imei1 + '\'' +
                 ", meid='" + meid + '\'' +
-                ", te1='" + te1 + '\'' +
+                ", tel1='" + tel1 + '\'' +
+                ", tel2='" + tel2 + '\'' +
                 ", simSerialNumber='" + simSerialNumber + '\'' +
                 ", imsi='" + imsi + '\'' +
                 ", deviceId='" + deviceId + '\'' +

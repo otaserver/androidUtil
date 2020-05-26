@@ -32,9 +32,14 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
 }
 
+//
 task makeReleaseJar(type: Jar, dependsOn: ['assembleRelease']){
-    archiveName = 'com.otaserver.androidUtil.jar'
+//    archiveName = "com.otaserver.androidUtil.${VERSION}.jar"
+//    archiveName已经过时，推荐使用archivesBaseName。
+//    具体细节查看gradle文档：https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html#org.gradle.api.tasks.bundling.Jar:archiveName
+    archivesBaseName = "com.otaserver.androidUtil.${VERSION}"//这种写法可以不用加后缀jar。
     from ('build/intermediates/javac/release/classes')
-    destinationDir = file('build/libs')
+//    destinationDir = file('build/libs')
+//    没有找到destinationDir替代方法的例子。但是可以省略。
 }
 
