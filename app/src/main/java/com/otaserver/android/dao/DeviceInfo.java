@@ -7,7 +7,7 @@ package com.otaserver.android.dao;
  */
 public class DeviceInfo {
 
-    //无需权限，一定存在
+    //无需权限，一定存在,是由函数产生的，并非读取系统设置值。
     private String appInstallGuid;
     private String appInstallDate;
 

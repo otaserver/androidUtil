@@ -7,9 +7,7 @@ import android.util.Log;
 import com.otaserver.android.dao.DeviceInfo;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,15 +16,9 @@ import java.util.UUID;
  *
  * @author scott
  */
-public class DeviceInfoTextUtil {
-
-    static DateTimeFormatter appInstallDateFomatter = DateTimeFormatter
-            .ofPattern("yyyy-MM-dd HH:mm:ss");
+public class DeviceInfoTextUtil extends DeviceInfoUtil {
 
     private static final String TAG = "DeviceInfoTextUtil";
-
-
-    Field[] fields = DeviceInfo.class.getDeclaredFields();
 
     /**
      * 保存DeviceInfo信息到SharedPerference中。
@@ -34,6 +26,7 @@ public class DeviceInfoTextUtil {
      * @param deviceInfo
      * @param pref
      */
+    @Override
     public void save(DeviceInfo deviceInfo, SharedPreferences pref) {
 
         SharedPreferences.Editor editor = pref.edit();
@@ -65,9 +58,11 @@ public class DeviceInfoTextUtil {
 
     /**
      * 遍历SharedPreferences，组装为javabean.
+     *
      * @param pref
      * @return
      */
+    @Override
     public DeviceInfo load(SharedPreferences pref) {
         DeviceInfo deviceInfo = new DeviceInfo();
 
@@ -87,23 +82,5 @@ public class DeviceInfoTextUtil {
         return deviceInfo;
     }
 
-
-    /**
-     * 使用反射机制动态调用dto的set方法
-     *
-     * @param dto
-     * @param name
-     * @param value
-     * @throws Exception
-     */
-    private void setValue(Object dto, String name, Object value) throws Exception {
-        Method[] m = dto.getClass().getMethods();
-        for (int i = 0; i < m.length; i++) {
-            if (("set" + name).toLowerCase().equals(m[i].getName().toLowerCase())) {
-                m[i].invoke(dto, value);
-                break;
-            }
-        }
-    }
 
 }
