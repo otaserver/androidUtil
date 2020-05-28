@@ -1,8 +1,11 @@
 package com.otaserver.android.util;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.otaserver.android.dao.DeviceInfo;
@@ -55,7 +58,7 @@ public abstract class DeviceInfoUtil {
          * 2. 厂商定制系统的Bug：有些设备返回的值为null。
          * 3. 设备差异：对于CDMA设备，ANDROID_ID和TelephonyManager.getDeviceId() 返回相同的值。
          */
-        String androidId = Settings.System.getString(contentResolver, Settings.System.ANDROID_ID);
+        String androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID);
         Log.d(TAG, "ANDROID_ID:" + androidId);
 
         String serial = android.os.Build.SERIAL;
@@ -64,6 +67,43 @@ public abstract class DeviceInfoUtil {
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setAndroidId(androidId);
         deviceInfo.setSerial(serial);
+        return deviceInfo;
+    }
+
+    //@SuppressLint 为代表抑制android的权限申请的提示。
+    @SuppressLint("MissingPermission")
+    /**
+     * 获取需要运行时权限才能获得的设备属性，
+     * 目前电话号码tel1属性是可以获得的。
+     */
+    public DeviceInfo getDeviceInfoPermission(Context context) {
+
+        final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+        //已过时方法。
+        //在api26已经放弃。官方建议使用getImei()和getMeid()这两个方法得到相应的值。
+        String deviceId = tm.getDeviceId();
+
+        //IMEI for GSM.
+        // 提示：androidQ 是无法取得imei的。
+        String imei_0 = tm.getImei(0);
+        String imei_1 = tm.getImei(1);
+
+        //MEID for CDMA.
+        String meid = tm.getMeid();
+        String tel1 = tm.getLine1Number();
+        String simSerialNumber = tm.getSimSerialNumber();
+        String imsi = tm.getSubscriberId();
+
+        DeviceInfo deviceInfo = new DeviceInfo();
+        deviceInfo.setImei0(imei_0);
+        deviceInfo.setImei1(imei_1);
+        deviceInfo.setMeid(meid);
+        deviceInfo.setTel1(tel1);
+        deviceInfo.setSimSerialNumber(simSerialNumber);
+        deviceInfo.setImsi(imsi);
+        deviceInfo.setDeviceId(deviceId);
+
         return deviceInfo;
     }
 
