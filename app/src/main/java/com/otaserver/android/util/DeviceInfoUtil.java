@@ -12,7 +12,8 @@ import com.otaserver.android.dao.DeviceInfo;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.time.format.DateTimeFormatter;
+
+//import java.time.format.DateTimeFormatter;
 
 public abstract class DeviceInfoUtil {
 
@@ -20,8 +21,7 @@ public abstract class DeviceInfoUtil {
 
     public abstract DeviceInfo load(SharedPreferences pref);
 
-    static DateTimeFormatter appInstallDateFomatter = DateTimeFormatter
-            .ofPattern("yyyy-MM-dd HH:mm:ss");
+//    static DateTimeFormatter appInstallDateFomatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     Field[] fields = DeviceInfo.class.getDeclaredFields();
 

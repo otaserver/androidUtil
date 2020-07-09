@@ -7,9 +7,14 @@ import android.util.Log;
 import com.otaserver.android.dao.DeviceInfo;
 
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+
+//import java.time.LocalDateTime;
+
 
 /**
  * 将android设备信息以默认的文本格式保存在SharedPreference中。
@@ -35,8 +40,16 @@ public class DeviceInfoTextUtil extends DeviceInfoUtil {
         if (!isContains) {
             String uniqueID = UUID.randomUUID().toString();
             deviceInfo.setAppInstallGuid(uniqueID);
-            LocalDateTime date = LocalDateTime.now();
-            deviceInfo.setAppInstallDate(DeviceInfoTextUtil.appInstallDateFomatter.format(date));
+
+//            LocalDateTime和DateTimeFormatter在jdk8中新增，尽管解决了线程安全问题，但Android6以前使用的是jdk7，并不包含此类。故改用
+//            故改用SimpleDateFormat替代即可。每次转换时间都new SimpleDateFormat也不会有线程问题。
+//            LocalDateTime date = LocalDateTime.now();
+//            deviceInfo.setAppInstallDate(DeviceInfoTextUtil.appInstallDateFomatter.format(date));
+
+            String currentDateTimeString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US).format(new Date());
+            deviceInfo.setAppInstallDate(currentDateTimeString);
+
+
             Log.i(TAG, "create new  appInstallGuid!");
         }
 
