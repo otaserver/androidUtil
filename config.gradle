@@ -6,7 +6,7 @@ ext {
     android = [
             compileSdkVersion : 29,         //默认会是本地安装android的sdk的最高版本。api29对应android10。后续修改也只会比29版本高。
             buildToolsVersion : "29.0.3",   //根据实际本地安装android的buildTool版本设置。
-            minSdkVersion : 23,             //没有硬性规定。暂时匹配测试机nexus6的版本。api23对应android6。
-            targetSdkVersion : 24          //要求最低24,因为是lib所以选要求最低的。
+            minSdkVersion : 26,             //由于调用.getImei(1)等方法，最低api需要26。所以不能在api23对应android6上运行。
+            targetSdkVersion : 26          //要求最低24,因为是lib所以选要求最低的。
     ]
 }

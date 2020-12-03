@@ -12,6 +12,7 @@ import com.otaserver.android.dao.DeviceInfo;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 //import java.time.format.DateTimeFormatter;
 
@@ -38,7 +39,7 @@ public abstract class DeviceInfoUtil {
     void setValue(Object dto, String name, Object value) throws Exception {
         Method[] m = dto.getClass().getMethods();
         for (int i = 0; i < m.length; i++) {
-            if (("set" + name).toLowerCase().equals(m[i].getName().toLowerCase())) {
+            if (("set" + name).toLowerCase(Locale.getDefault()).equals(m[i].getName().toLowerCase(Locale.getDefault()))) {
                 m[i].invoke(dto, value);
                 break;
             }

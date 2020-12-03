@@ -33,7 +33,6 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.otaserver.android.util"
         minSdkVersion rootProject.ext.android["minSdkVersion"]
         targetSdkVersion rootProject.ext.android["targetSdkVersion"]
         versionCode gitCommitCount
@@ -49,21 +48,21 @@ android {
     lintOptions {
         disable('AllowBackup', 'GoogleAppIndexingWarning', 'MissingApplicationIcon')
     }
-    // 输出版本名到 build 目录下的 version_name.txt 文件
-    applicationVariants.all { variant ->
-        project.tasks["assemble${variant.name.capitalize()}"].doLast {
-            new File(project.buildDir, "version_name.txt").withWriter('utf-8') {
-                it.write(gitCurrentTag + "(" + gitCommitDate + "_" + gitCommitShortHash + ")")
-            }
-        }
-    }
+    // 输出版本名到 build 目录下的 version_name.txt 文件，不注释执行bintray会失败。
+    // applicationVariants.all { variant ->
+    //     project.tasks["assemble${variant.name.capitalize()}"].doLast {
+    //         new File(project.buildDir, "version_name.txt").withWriter('utf-8') {
+    //             it.write(gitCurrentTag + "(" + gitCommitDate + "_" + gitCommitShortHash + ")")
+    //         }
+    //     }
+    // }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
 //    androidTestImplementation 'androidx.test:core:1.2.0'
 
     //Gson序列号对象
