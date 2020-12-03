@@ -6,13 +6,14 @@ buildscript {
     repositories {
         google()
         jcenter()
-        
+
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.0'
-        
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        // 如果gradle版本大于6.0+，com.novoda.release会报LazyConfigurationUsageContext异常。
+        // 故gradle只能使用5版本的最后一版5.6.4，而gradle5.6.4匹配的gradle plugin为3.6.0
+        // 除非novoda版本升级，否则不要升级gradle和gradle plugin版本。
+        classpath 'com.android.tools.build:gradle:3.6.0'
+
     }
 }
 
