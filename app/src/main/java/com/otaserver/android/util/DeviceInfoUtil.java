@@ -79,7 +79,7 @@ public abstract class DeviceInfoUtil {
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setAndroidId(androidId);
         deviceInfo.setSerial(serial);
-        deviceInfo.setAndroidApiLevel(androidApiLevel);
+        deviceInfo.setAndroidApiLevel(String.valueOf(androidApiLevel));
         return deviceInfo;
     }
 

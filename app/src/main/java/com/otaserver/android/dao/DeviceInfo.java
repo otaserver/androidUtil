@@ -16,7 +16,7 @@ public class DeviceInfo {
     private String appInstallDate;
 
     //用户当前主机的android版本。
-    private int androidApiLevel;
+    private String androidApiLevel;
 
     //无需权限，基本保证存在
     private String androidId;
