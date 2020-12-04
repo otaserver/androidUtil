@@ -1,9 +1,11 @@
 package com.otaserver.android.util;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -63,11 +65,21 @@ public abstract class DeviceInfoUtil {
         Log.d(TAG, "ANDROID_ID:" + androidId);
 
         String serial = android.os.Build.SERIAL;
-        Log.d(TAG, "serial:" + serial);
+        Log.d(TAG, "SERIAL:" + serial);
+
+        // Build.VERSION.SDK_INT：当前硬件上运行的android版本。
+        // The SDK version of the software currently running on this hardware
+        // device. This value never changes while a device is booted, but it may
+        // increase when the hardware manufacturer provides an OTA update.
+        // 以下是一个比较版本的例子
+        //  if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+        int androidApiLevel = Build.VERSION.SDK_INT;
+        Log.d(TAG, "ANDROID_API_LEVEL: " + androidApiLevel);
 
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setAndroidId(androidId);
         deviceInfo.setSerial(serial);
+        deviceInfo.setAndroidApiLevel(androidApiLevel);
         return deviceInfo;
     }
 
@@ -81,17 +93,15 @@ public abstract class DeviceInfoUtil {
 
         final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-        //已过时方法。
-        //在api26已经放弃。官方建议使用getImei()和getMeid()这两个方法得到相应的值。
-        String deviceId = tm.getDeviceId();
+        String deviceId = getDeviceId(tm);
 
+        // 在android8.0(O,level26)才支持，但测试android10(Q,level29)是无法取得imei的。
         //IMEI for GSM.
-        // 提示：androidQ 是无法取得imei的。
-        String imei_0 = tm.getImei(0);
-        String imei_1 = tm.getImei(1);
-
+        String imei_0 = getImei(tm, 0);
+        String imei_1 = getImei(tm, 1);
         //MEID for CDMA.
-        String meid = tm.getMeid();
+        String meid = getMeid(tm);
+
         String tel1 = tm.getLine1Number();
         String simSerialNumber = tm.getSimSerialNumber();
         String imsi = tm.getSubscriberId();
@@ -107,5 +117,37 @@ public abstract class DeviceInfoUtil {
 
         return deviceInfo;
     }
+
+    //@SuppressLint 为代表抑制android的权限申请的提示。
+    @SuppressLint("MissingPermission")
+    //此方法在android8.0(O,apiLevel26)中才支持。
+    @TargetApi(Build.VERSION_CODES.O)
+    private String getImei(TelephonyManager tm, int index) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return tm.getImei(index);
+        } else {
+            return "";
+        }
+    }
+
+    //@SuppressLint 为代表抑制android的权限申请的提示。
+    @SuppressLint("MissingPermission")
+    //此方法在android8.0(O,apiLevel26)中才支持。
+    @TargetApi(Build.VERSION_CODES.O)
+    private String getMeid(TelephonyManager tm) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return tm.getMeid();
+        } else {
+            return "";
+        }
+    }
+
+    //@SuppressLint 为代表抑制android的权限申请的提示。
+    @SuppressLint("MissingPermission")
+    private String getDeviceId(TelephonyManager tm) {
+        //在api26已经过时。官方建议使用getImei()和getMeid()这两个方法得到相应的值。
+        return tm.getDeviceId();
+    }
+
 
 }

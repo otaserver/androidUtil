@@ -67,6 +67,10 @@ dependencies {
 
     //Gson序列号对象
     implementation 'com.google.code.gson:gson:2.8.6'
+    // 注册lombok，减少无谓的set,get代码
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+    // 必须加上，不然编译都不通过。因为是android项目，发布时不需要打包lombok。
+    compileOnly 'org.projectlombok:lombok:1.18.16'
 }
 
 //自己打包jar的task方法
