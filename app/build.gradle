@@ -1,17 +1,10 @@
+// 服务端git打tag的脚本文件
+// gradle执行有先后顺序的，因为plugin: 'com.android.library'需要其中task'，故需要放在其之前。
+// 但是验证也不是啊？？？
+apply from: "gittag.gradle"
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
-
-def gitCommitShortHash = 'git log -1 --pretty=%h'.execute([], project.rootDir).text.trim()
-def gitCommitDate = 'git log -1 --pretty=%ci'.execute([], project.rootDir).text.trim().split()[0]
-// Auto-incrementing commit count based on counting commits to HEAD (Build #543)
-def gitCommitCount = Integer.parseInt('git rev-list HEAD --count'.execute([], project.rootDir).text.trim())
-// 使用git tags 作为版本名称，需要在当前分支下有tag标签，此命令会获取最后一个tag的名称。
-def gitCurrentTag = 'git describe --tags --abbrev=0'.execute([], project.rootDir).text.trim()
-
-println "gitCommitDate==========" + gitCommitDate
-println "gitCommitShortHash==========" + gitCommitShortHash
-println "gitCommitCount===========" + gitCommitCount
-println "gitCurrentTag============" + gitCurrentTag
 
 buildscript {
     repositories {
@@ -35,8 +28,15 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.android["minSdkVersion"]
         targetSdkVersion rootProject.ext.android["targetSdkVersion"]
-        versionCode gitCommitCount
-        versionName gitCurrentTag
+        //println "=====这里才开始执行defaultConfig获取属性======="
+
+        //buildConfigField标签可以自定义属性，可以直接在生成的BuildConfig.java代码里看属性
+        buildConfigField "boolean", "IS_DEBUG", "false"
+
+        //从logVersion的task中读取变量
+        versionCode logVersion.gitCommitCount
+        versionName logVersion.gitCurrentTag
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -48,14 +48,6 @@ android {
     lintOptions {
         disable('AllowBackup', 'GoogleAppIndexingWarning', 'MissingApplicationIcon')
     }
-    // 输出版本名到 build 目录下的 version_name.txt 文件，不注释执行bintray会失败。
-    // applicationVariants.all { variant ->
-    //     project.tasks["assemble${variant.name.capitalize()}"].doLast {
-    //         new File(project.buildDir, "version_name.txt").withWriter('utf-8') {
-    //             it.write(gitCurrentTag + "(" + gitCommitDate + "_" + gitCommitShortHash + ")")
-    //         }
-    //     }
-    // }
 }
 
 dependencies {
@@ -67,24 +59,42 @@ dependencies {
 
     //Gson序列号对象
     implementation 'com.google.code.gson:gson:2.8.6'
+
     // 注册lombok，减少无谓的set,get代码
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
     // 必须加上，不然编译都不通过。因为是android项目，发布时不需要打包lombok。
     compileOnly 'org.projectlombok:lombok:1.18.16'
 }
 
 //自己打包jar的task方法
-task makeReleaseJar(type: Jar, dependsOn: ['assembleRelease']) {
-//    archiveName = "com.otaserver.androidUtil.${VERSION}.jar"
-//    archiveName已经过时，推荐使用archivesBaseName。
-//    具体细节查看gradle文档：https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html#org.gradle.api.tasks.bundling.Jar:archiveName
-//    archivesBaseName = "com.otaserver.androidUtil.${VERSION}"//这种写法可以不用加后缀jar。
-    archivesBaseName = "com.otaserver.androidUtil.${gitCurrentTag}"//这种写法可以不用加后缀jar。
-    from('build/intermediates/javac/release/classes')
-//    destinationDir = file('build/libs')
-//    没有找到destinationDir替代方法的例子。但是可以省略。
+task makeReleaseJar(type: Jar, dependsOn: ['assembleRelease', 'logVersion']) {
+
+    //gradle中的分组，不定义则放在other分组中。
+    group = "otaserver"
+    description = "自定义打包"
+
+    doFirst {
+        
+        // 具体细节查看gradle文档：https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html#org.gradle.api.tasks.bundling.Jar:archiveName
+        // archivesBaseName = "com.otaserver.androidUtil.${VERSION}"//这种写法可以不用加后缀jar。
+        //${}写法是因为该表达式在双引号中。
+        archivesBaseName = "com.otaserver.androidUtil.${logVersion.gitCurrentTag}"
+        from('build/intermediates/javac/release/classes')
+        manifest = project.manifest {
+            from sharedManifest
+        }
+    }
 }
 
+//自定义属性写在manifest中
+ext.sharedManifest = manifest {
+    attributes("Implementation-Title": "Gradle",
+            "Implementation-Version": logVersion.totalVersionName)
+}
+
+//注册执行makeReleaseJar任务前必须运行logVersion任务
+//makeReleaseJar.dependsOn logVersion
 
 //给bintray发布使用,暂时未使用。目前用命令行代替。
 publish {
@@ -92,7 +102,7 @@ publish {
     repoName = 'sdk'        // repo远程仓库名字，不指明，默认上传到maven。在bintray有repo库的设置，最好一致。
     groupId = 'otaserver.opensdk'    //jcenter上的路径，建议使用github上用户名或者域名.会在maven-metadata.xml中体现。
     artifactId = 'AndroidUtil'       //会在maven-metadata.xml中体现。
-    publishVersion = gitCurrentTag
+    publishVersion = logVersion.gitCurrentTag   //使用logVersion的task的返回值
     desc = 'some utility for android development.'   //工具上传可能会有乱码
     website = 'https://github.com/otaserver/androidUtil'
 }
@@ -102,6 +112,7 @@ tasks.withType(Javadoc) {//防止编码问题
     options.addStringOption('encoding', 'UTF-8')
     options.addStringOption('charSet', 'UTF-8')
 }
+
 
 //引用包格式为：
 //dependencies {
