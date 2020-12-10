@@ -1,4 +1,4 @@
-//gittag.gradle模板04(使用ext全局变量和task变量传递参数),2020-12-10修改
+//gittag.gradle模板03(使用ext全局变量和task变量传递参数),2020-12-10修改
 
 //定义获取服务端git的tag，用于版本号和向客户端返回
 tasks.register("logVersion") {
