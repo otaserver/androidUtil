@@ -1,4 +1,4 @@
-//gittag.gradle模板03(使用ext全局变量和task变量传递参数),2020-12-10修改
+//gittag.gradle模板04(使用ext全局变量和task变量传递参数),2021-01-13修改
 
 //定义获取服务端git的tag，用于版本号和向客户端返回
 tasks.register("logVersion") {
@@ -29,6 +29,8 @@ tasks.register("logVersion") {
     project.ext.set("gitCommitCount", gitCommitCount)
     project.ext.set("gitCurrentTag", gitCurrentTag)
     project.ext.set("totalVersionName", totalVersionName)
+    //使用ext示例：
+    //project.ext.totalVersionName。数组示例可参考configAndroid.gradle
 
     //使用task传递参数
     ext.gitCommitDate = gitCommitDate
@@ -36,4 +38,7 @@ tasks.register("logVersion") {
     ext.gitCommitCount = gitCommitCount
     ext.gitCurrentTag = gitCurrentTag
     ext.totalVersionName = totalVersionName
+    //使用task示例：
+    //直接使用：versionCode logVersion.gitCommitCount
+    //字符串变量：buildConfigField "String", "BUILD_TIME", "\"${logVersion.gitCommitDate}\""
 }
