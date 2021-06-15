@@ -1,28 +1,29 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 //载入自定义的配置文件
 //配置参数
-apply from: "config.gradle"
+apply from: "configAndroid.gradle"
 
 buildscript {
     repositories {
+        mavenCentral()
         google()
-        jcenter()
-
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.aliyun.com/repository/public/' }
     }
     dependencies {
         // 如果gradle版本大于6.0+，com.novoda.release会报LazyConfigurationUsageContext异常。
         // 故gradle只能使用5版本的最后一版5.6.4，而gradle5.6.4匹配的gradle plugin为3.6.0
         // 除非novoda版本升级，否则不要升级gradle和gradle plugin版本。
         classpath 'com.android.tools.build:gradle:3.6.0'
-
     }
 }
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
-        jcenter()
-        
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.aliyun.com/repository/public/' }
     }
 }
 

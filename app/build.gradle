@@ -4,17 +4,17 @@
 apply from: "gittag.gradle"
 
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+// apply plugin: 'com.novoda.bintray-release'
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        // 从mvnrepository查2020.07查0.9.2在jcenter是最新包
-        classpath 'com.novoda:bintray-release:0.9.2'
-    }
-}
+// buildscript {
+//     repositories {
+//          jcenter()
+//     }
+//     dependencies {
+//         // 从mvnrepository查2020.07查0.9.2在jcenter是最新包
+//         // classpath 'com.novoda:bintray-release:0.9.2'
+//     }
+// }
 
 android {
     compileSdkVersion rootProject.ext.android["compileSdkVersion"]
@@ -52,7 +52,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
 //    androidTestImplementation 'androidx.test:core:1.2.0'
@@ -61,10 +61,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     // 注册lombok，减少无谓的set,get代码
-    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
     // 必须加上，不然编译都不通过。因为是android项目，发布时不需要打包lombok。
-    compileOnly 'org.projectlombok:lombok:1.18.16'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
 }
 
 //自己打包jar的task方法
@@ -97,15 +97,15 @@ ext.sharedManifest = manifest {
 //makeReleaseJar.dependsOn logVersion
 
 //给bintray发布使用,暂时未使用。目前用命令行代替。
-publish {
-    userOrg = "otaserver"   //用户名
-    repoName = 'sdk'        // repo远程仓库名字，不指明，默认上传到maven。在bintray有repo库的设置，最好一致。
-    groupId = 'otaserver.opensdk'    //jcenter上的路径，建议使用github上用户名或者域名.会在maven-metadata.xml中体现。
-    artifactId = 'AndroidUtil'       //会在maven-metadata.xml中体现。
-    publishVersion = logVersion.gitCurrentTag   //使用logVersion的task的返回值
-    desc = 'some utility for android development.'   //工具上传可能会有乱码
-    website = 'https://github.com/otaserver/androidUtil'
-}
+// publish {
+//     userOrg = "otaserver"   //用户名
+//     repoName = 'sdk'        // repo远程仓库名字，不指明，默认上传到maven。在bintray有repo库的设置，最好一致。
+//     groupId = 'otaserver.opensdk'    //jcenter上的路径，建议使用github上用户名或者域名.会在maven-metadata.xml中体现。
+//     artifactId = 'AndroidUtil'       //会在maven-metadata.xml中体现。
+//     publishVersion = logVersion.gitCurrentTag   //使用logVersion的task的返回值
+//     desc = 'some utility for android development.'   //工具上传可能会有乱码
+//     website = 'https://github.com/otaserver/androidUtil'
+// }
 
 tasks.withType(Javadoc) {//防止编码问题
     options.addStringOption('Xdoclint:none', '-quiet')
